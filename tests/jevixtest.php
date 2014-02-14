@@ -5,7 +5,10 @@
  * За помощь в написании примера спасибо Александру (http://vaart.habrahabr.ru, indrid@mail.ru)
  */
 
-require('../jevix.class.php');
+require '../src/Jevix/Jevix.php';
+
+use Jevix\Jevix;
+
 
 $jevix = new Jevix();
 
@@ -160,4 +163,3 @@ Array
 
 )
 -------------*/
-?>

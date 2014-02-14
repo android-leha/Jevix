@@ -1,0 +1,11 @@
+{
+    "name": "jv/jevix",
+    "description": "Library for html filtering",
+    "autoload": {
+        "psr-0": { "Jevix": "src/" }
+    },
+
+    "require": {
+
+    }
+}

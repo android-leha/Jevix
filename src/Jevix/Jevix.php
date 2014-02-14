@@ -7,9 +7,11 @@
  * http://code.google.com/p/jevix/
  *
  * @author ur001 <ur001ur001@gmail.com>, http://ur001.habrahabr.ru
- * @version 1.01
+ * @version 1.12
  *
  * История версий:
+ * 1.12:
+ *  + Возможность указать разрешеные протоколы для разных параметров через cfgSetAllowedProtocols (avadim)
  * 1.11:
  *  + Исправлены ошибки из-за которых удалялись теги и аттрибуты со значением "0". Спасибо Dmitry Shurupov (dmitry.shurupov@trueoffice.ru)
  * 1.1:
@@ -21,7 +23,7 @@
  *  + Функции для работы со строками заменены на аналогичные mb_*, чтобы не перегружать через mbstring.func_overload (ev.y0ga@mail.ru)
  * 1.01
  *  + cfgSetAutoReplace теперь регистронезависимый
- *  + Возможность указать через cfgSetTagIsEmpty теги с пустым содержанием, которые не будут адалены парсером (rus.engine)
+ *  + Возможность указать через cfgSetTagIsEmpty теги с пустым содержанием, которые не будут удалены парсером (rus.engine)
  *  + фикс бага удаления контента тега при разном регистре открывающего и закрывающего тегов  (rus.engine)
  *  + Исправлено поведение парсера при установке правила sfgParamsAutoAdd(). Теперь
  *    параметр устанавливается только в том случае, если его вообще нет в
@@ -133,6 +135,9 @@ class Jevix
     protected $tagsStack;
     protected $openedTag;
     protected $autoReplace; // Автозамена
+	protected $allowedProtocols = array('#img' => 'http:|https:');
+	protected $allowedProtocolsDefault = array('http','https','ftp', '');
+    protected $skipProtocol = array();
     protected $isXHTMLMode = true; // <br/>, <img/>
     protected $isAutoBrMode = true; // \n = <br/>
     protected $isAutoLinkMode = true;
@@ -162,7 +167,10 @@ class Jevix
     const TR_TAG_NO_TYPOGRAPHY = 12; // Отключение типографирования для тега
     const TR_TAG_IS_EMPTY = 13; // Не короткий тег с пустым содержанием имеет право существовать
     const TR_TAG_NO_AUTO_BR = 14; // Тег в котором не нужна авто-расстановка <br>
-    const TR_TAG_CALLBACK = 15; // Тег обрабатывается callback-функцией
+    const TR_TAG_CALLBACK = 15;         // Тег обрабатывается callback-функцией - в обработку уходит только контент тега(короткие теги не обрабатываются)
+    const TR_TAG_BLOCK_TYPE = 16;       // Тег после которого не нужна автоподстановка доп. <br>
+    const TR_TAG_CALLBACK_FULL = 17;    // Тег обрабатывается callback-функцией - в обработку уходит весь тег
+    const TR_PARAM_COMBINATION = 18;    // Проверка на возможные комбинации значений параметров тега
 
     /**
      * Классы символов генерируются symclass.php
